@@ -362,7 +362,7 @@ Your project includes a `railway.json` configuration file:
 
 **Common Issues:**
 
-1. **Build Failures**
+1. **Docker Build Failures**
    ```bash
    # Check build logs
    railway logs
@@ -371,14 +371,19 @@ Your project includes a `railway.json` configuration file:
    railway up --force
    ```
 
-2. **Database Issues**
+2. **Composer Installation Issues**
+   - **Problem**: `composer install --ignore-platform-reqs` fails
+   - **Solution**: Use the provided Dockerfile which handles dependencies properly
+   - **Alternative**: Set environment variable `COMPOSER_ALLOW_SUPERUSER=1`
+
+3. **Database Issues**
    ```bash
    # Reset database
    railway run php artisan migrate:fresh --force
    railway run php artisan db:seed --force
    ```
 
-3. **Asset Build Issues**
+4. **Asset Build Issues**
    ```bash
    # Clear cache and rebuild
    railway run php artisan config:clear
@@ -386,7 +391,7 @@ Your project includes a `railway.json` configuration file:
    railway run npm run build
    ```
 
-4. **Environment Variables**
+5. **Environment Variables**
    ```bash
    # List all variables
    railway variables
@@ -394,6 +399,30 @@ Your project includes a `railway.json` configuration file:
    # Update specific variable
    railway variables set VARIABLE_NAME=value
    ```
+
+6. **Docker Build Optimization**
+   - The project includes a `Dockerfile` optimized for Laravel
+   - Uses multi-stage build to reduce image size
+   - Includes proper PHP extensions and Node.js
+   - Handles permissions correctly
+
+**Docker Configuration Files:**
+- `Dockerfile` - Main container configuration
+- `docker/nginx.conf` - Nginx web server configuration
+- `docker/supervisord.conf` - Process management
+- `.dockerignore` - Excludes unnecessary files from build
+
+**Environment Variables for Docker:**
+```
+COMPOSER_ALLOW_SUPERUSER=1
+APP_ENV=production
+APP_DEBUG=false
+DB_CONNECTION=sqlite
+DB_DATABASE=/tmp/database.sqlite
+CACHE_DRIVER=file
+SESSION_DRIVER=file
+QUEUE_CONNECTION=sync
+```
 
 #### Railway CLI Commands
 
