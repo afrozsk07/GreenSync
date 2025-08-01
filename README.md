@@ -185,6 +185,235 @@ The application provides RESTful APIs for:
 
 ##  Deployment
 
+### Railway Deployment
+
+Railway is a modern platform for deploying applications with zero configuration. Here's how to deploy GreenSync on Railway:
+
+#### Option 1: Railway Web Interface (Recommended for Beginners)
+
+**Step-by-Step Web Deployment:**
+
+1. **Create Railway Account**
+   - Go to [railway.app](https://railway.app)
+   - Sign up with GitHub, GitLab, or email
+
+2. **Create New Project**
+   - Click "New Project" in the Railway dashboard
+   - Select "Deploy from GitHub repo"
+   - Connect your GitHub account if not already connected
+   - Select your `greensync` repository
+
+3. **Configure Environment Variables**
+   - In your project dashboard, go to "Variables" tab
+   - Add the following environment variables:
+   ```
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://your-app-name.railway.app
+   DB_CONNECTION=sqlite
+   DB_DATABASE=/tmp/database.sqlite
+   CACHE_DRIVER=file
+   SESSION_DRIVER=file
+   SESSION_LIFETIME=120
+   QUEUE_CONNECTION=sync
+   APP_KEY=base64:your-generated-key-here
+   ```
+
+4. **Generate Application Key**
+   - In the Railway dashboard, go to "Deployments" tab
+   - Click "Deploy" to trigger the first deployment
+   - Once deployed, go to "Variables" and add:
+   ```
+   APP_KEY=base64:$(openssl rand -base64 32)
+   ```
+
+5. **Run Database Migrations**
+   - Go to "Deployments" tab
+   - Click on the latest deployment
+   - Go to "Logs" tab
+   - Add a custom command: `php artisan migrate --force`
+
+6. **Seed Database (Optional)**
+   - In the same deployment logs, add: `php artisan db:seed --force`
+
+7. **Build Frontend Assets**
+   - Add command: `npm run build`
+
+8. **Configure Domain**
+   - Go to "Settings" → "Domains"
+   - Add your custom domain or use the provided Railway domain
+
+#### Option 2: Railway CLI (Advanced Users)
+
+#### Prerequisites
+- Railway account (sign up at [railway.app](https://railway.app))
+- Railway CLI installed (`npm install -g @railway/cli`)
+
+#### Step-by-Step CLI Deployment
+
+1. **Install Railway CLI**
+   ```bash
+   npm install -g @railway/cli
+   ```
+
+2. **Login to Railway**
+   ```bash
+   railway login
+   ```
+
+3. **Initialize Railway Project**
+   ```bash
+   # Navigate to your project directory
+   cd greensync
+   
+   # Initialize Railway project
+   railway init
+   ```
+
+4. **Configure Environment Variables**
+   ```bash
+   # Set environment variables
+   railway variables set APP_ENV=production
+   railway variables set APP_DEBUG=false
+   railway variables set APP_URL=https://your-app-name.railway.app
+   railway variables set DB_CONNECTION=sqlite
+   railway variables set DB_DATABASE=/tmp/database.sqlite
+   railway variables set CACHE_DRIVER=file
+   railway variables set SESSION_DRIVER=file
+   railway variables set SESSION_LIFETIME=120
+   railway variables set QUEUE_CONNECTION=sync
+   ```
+
+5. **Generate Application Key**
+   ```bash
+   railway variables set APP_KEY=$(php artisan key:generate --show)
+   ```
+
+6. **Deploy to Railway**
+   ```bash
+   railway up
+   ```
+
+7. **Run Database Migrations**
+   ```bash
+   railway run php artisan migrate --force
+   ```
+
+8. **Seed Database (Optional)**
+   ```bash
+   railway run php artisan db:seed --force
+   ```
+
+9. **Build Frontend Assets**
+   ```bash
+   railway run npm run build
+   ```
+
+#### Railway Dashboard Features
+
+**Web Interface Benefits:**
+-  **Visual Deployment** - See deployment progress in real-time
+-  **Easy Variable Management** - Add/edit environment variables through UI
+-  **Log Monitoring** - View logs directly in the browser
+-  **Domain Management** - Configure custom domains easily
+-  **Team Collaboration** - Invite team members to manage the project
+-  **Resource Monitoring** - Track CPU, memory, and network usage
+
+**Dashboard Sections:**
+- **Overview** - Project status and recent deployments
+- **Deployments** - Build history and logs
+- **Variables** - Environment variable management
+- **Settings** - Domain, team, and project configuration
+- **Metrics** - Performance and usage statistics
+
+#### Railway Configuration
+
+Your project includes a `railway.json` configuration file:
+
+```json
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "numReplicas": 1,
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
+```
+
+#### Railway Dashboard Setup
+
+1. **Access Railway Dashboard**
+   - Go to [railway.app](https://railway.app)
+   - Select your project
+
+2. **Configure Domain**
+   - Go to Settings → Domains
+   - Add your custom domain or use the provided Railway domain
+
+3. **Monitor Deployment**
+   - Check the Deployments tab for build status
+   - View logs for any errors
+
+#### Troubleshooting Railway Deployment
+
+**Common Issues:**
+
+1. **Build Failures**
+   ```bash
+   # Check build logs
+   railway logs
+   
+   # Rebuild and deploy
+   railway up --force
+   ```
+
+2. **Database Issues**
+   ```bash
+   # Reset database
+   railway run php artisan migrate:fresh --force
+   railway run php artisan db:seed --force
+   ```
+
+3. **Asset Build Issues**
+   ```bash
+   # Clear cache and rebuild
+   railway run php artisan config:clear
+   railway run php artisan cache:clear
+   railway run npm run build
+   ```
+
+4. **Environment Variables**
+   ```bash
+   # List all variables
+   railway variables
+   
+   # Update specific variable
+   railway variables set VARIABLE_NAME=value
+   ```
+
+#### Railway CLI Commands
+
+```bash
+# Deploy changes
+railway up
+
+# View logs
+railway logs
+
+# Run commands
+railway run php artisan migrate
+
+# Open in browser
+railway open
+
+# Check status
+railway status
+```
+
 ### Vercel Deployment
 
 1. **Install Vercel CLI**
@@ -202,9 +431,23 @@ The application provides RESTful APIs for:
    vercel --prod
    ```
 
-### Environment Variables for Vercel
+### Heroku Deployment
 
-Set these environment variables in your Vercel dashboard:
+The project includes a `Procfile` for Heroku deployment:
+```
+web: vendor/bin/heroku-php-apache2 public/
+```
+
+### Automated Deployment
+
+Use the provided deployment script:
+```bash
+./deploy.sh
+```
+
+### Environment Variables for Production
+
+Set these environment variables in your deployment platform:
 
 ```
 APP_ENV=production
@@ -262,11 +505,11 @@ If you encounter any issues or have questions:
 ##  Version History
 
 - **v1.0.0** - Initial release with basic waste management features
-- User and admin authentication
-- Waste collection request system
-- Collection tracking functionality
-- Transportation management
-- Segregation oversight
+  - User and admin authentication
+  - Waste collection request system
+  - Collection tracking functionality
+  - Transportation management
+  - Segregation oversight
 
 ---
 
