@@ -1,0 +1,22 @@
+{
+    "version": 2,
+    "framework": null,
+    "functions": {
+        "public/index.php": {
+            "runtime": "vercel-php@0.6.0"
+        }
+    },
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/public/index.php"
+        }
+    ],
+    "build": {
+        "env": {
+            "COMPOSER_HOME": "/tmp/.composer"
+        }
+    },
+    "buildCommand": "composer install --no-dev && npm install && npm run build",
+    "outputDirectory": "public"
+} 
