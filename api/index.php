@@ -30,6 +30,6 @@ $response = $app->handleRequest($request);
 
 // Send the response
 $response->send();
-
+//debug comment
 // Terminate the application
 $app->terminate($request, $response); 
