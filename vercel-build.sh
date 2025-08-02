@@ -3,18 +3,6 @@
 # Vercel Build Script for Laravel
 echo "Starting Vercel build for GreenSync..."
 
-# Install PHP dependencies
-echo "Installing PHP dependencies..."
-composer install --no-dev --optimize-autoloader --no-interaction
-
-# Install Node.js dependencies
-echo "Installing Node.js dependencies..."
-npm ci --only=production
-
-# Build frontend assets
-echo "Building frontend assets..."
-npm run build
-
 # Create necessary directories
 echo "Creating necessary directories..."
 mkdir -p storage/framework/cache
