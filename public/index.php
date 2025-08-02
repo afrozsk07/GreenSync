@@ -5,6 +5,13 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+// Vercel-specific configurations
+if (getenv('VERCEL_ENV') === 'production') {
+    // Set production environment variables
+    putenv('APP_ENV=production');
+    putenv('APP_DEBUG=false');
+}
+
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
@@ -17,4 +24,12 @@ require __DIR__.'/../vendor/autoload.php';
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
-$app->handleRequest(Request::capture());
+// Handle the request
+$request = Request::capture();
+$response = $app->handleRequest($request);
+
+// Send the response
+$response->send();
+
+// Terminate the application
+$app->terminate($request, $response);

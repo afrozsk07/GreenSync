@@ -6,7 +6,8 @@
     "build": "npm run build",
     "dev": "npm run dev",
     "deploy": "bash deploy.sh",
-    "vercel-build": "npm run build"
+    "vercel-build": "bash vercel-build.sh",
+    "vercel-dev": "php artisan serve --host=0.0.0.0 --port=$PORT"
   },
   "keywords": [
     "laravel",

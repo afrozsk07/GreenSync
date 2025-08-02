@@ -151,6 +151,9 @@ GreenSync/
 ├── composer.json          # PHP dependencies
 ├── package.json           # Node dependencies
 ├── vercel.json           # Vercel configuration
+├── vercel-build.sh       # Vercel build script
+├── Procfile              # Heroku configuration
+├── deploy.sh             # Deployment script
 └── README.md             # Project documentation
 ```
 
@@ -185,31 +188,42 @@ The application provides RESTful APIs for:
 
 ##  Deployment
 
-### Railway Deployment
+### Vercel Deployment
 
-Railway is a modern platform for deploying applications with zero configuration. Here's how to deploy GreenSync on Railway:
+Vercel is a modern platform for deploying applications with excellent Laravel support. Here's how to deploy GreenSync on Vercel:
 
-#### Option 1: Railway Web Interface (Recommended for Beginners)
+#### Prerequisites
+- Vercel account (sign up at [vercel.com](https://vercel.com))
+- Vercel CLI installed (`npm install -g vercel`)
+- GitHub repository with your project
+
+#### Option 1: Vercel Web Interface (Recommended)
 
 **Step-by-Step Web Deployment:**
 
-1. **Create Railway Account**
-   - Go to [railway.app](https://railway.app)
+1. **Create Vercel Account**
+   - Go to [vercel.com](https://vercel.com)
    - Sign up with GitHub, GitLab, or email
 
-2. **Create New Project**
-   - Click "New Project" in the Railway dashboard
-   - Select "Deploy from GitHub repo"
-   - Connect your GitHub account if not already connected
+2. **Import Project**
+   - Click "New Project" in the Vercel dashboard
+   - Import your GitHub repository
    - Select your `greensync` repository
 
-3. **Configure Environment Variables**
-   - In your project dashboard, go to "Variables" tab
-   - Add the following environment variables:
+3. **Configure Project Settings**
+   - **Framework Preset**: Other
+   - **Root Directory**: `./` (leave empty)
+   - **Build Command**: `bash vercel-build.sh`
+   - **Output Directory**: `public`
+   - **Install Command**: `composer install --no-dev --optimize-autoloader --no-interaction && npm ci --only=production`
+
+4. **Set Environment Variables**
+   - Go to "Settings" → "Environment Variables"
+   - Add the following variables:
    ```
    APP_ENV=production
    APP_DEBUG=false
-   APP_URL=https://your-app-name.railway.app
+   APP_URL=https://your-project-name.vercel.app
    DB_CONNECTION=sqlite
    DB_DATABASE=/tmp/database.sqlite
    CACHE_DRIVER=file
@@ -219,235 +233,24 @@ Railway is a modern platform for deploying applications with zero configuration.
    APP_KEY=base64:your-generated-key-here
    ```
 
-4. **Generate Application Key**
-   - In the Railway dashboard, go to "Deployments" tab
-   - Click "Deploy" to trigger the first deployment
-   - Once deployed, go to "Variables" and add:
-   ```
-   APP_KEY=base64:$(openssl rand -base64 32)
-   ```
-
-5. **Run Database Migrations**
-   - Go to "Deployments" tab
-   - Click on the latest deployment
-   - Go to "Logs" tab
-   - Add a custom command: `php artisan migrate --force`
-
-6. **Seed Database (Optional)**
-   - In the same deployment logs, add: `php artisan db:seed --force`
-
-7. **Build Frontend Assets**
-   - Add command: `npm run build`
-
-8. **Configure Domain**
-   - Go to "Settings" → "Domains"
-   - Add your custom domain or use the provided Railway domain
-
-#### Option 2: Railway CLI (Advanced Users)
-
-#### Prerequisites
-- Railway account (sign up at [railway.app](https://railway.app))
-- Railway CLI installed (`npm install -g @railway/cli`)
-
-#### Step-by-Step CLI Deployment
-
-1. **Install Railway CLI**
-   ```bash
-   npm install -g @railway/cli
-   ```
-
-2. **Login to Railway**
-   ```bash
-   railway login
-   ```
-
-3. **Initialize Railway Project**
-   ```bash
-   # Navigate to your project directory
-   cd greensync
-   
-   # Initialize Railway project
-   railway init
-   ```
-
-4. **Configure Environment Variables**
-   ```bash
-   # Set environment variables
-   railway variables set APP_ENV=production
-   railway variables set APP_DEBUG=false
-   railway variables set APP_URL=https://your-app-name.railway.app
-   railway variables set DB_CONNECTION=sqlite
-   railway variables set DB_DATABASE=/tmp/database.sqlite
-   railway variables set CACHE_DRIVER=file
-   railway variables set SESSION_DRIVER=file
-   railway variables set SESSION_LIFETIME=120
-   railway variables set QUEUE_CONNECTION=sync
-   ```
-
 5. **Generate Application Key**
+   - In your local terminal:
    ```bash
-   railway variables set APP_KEY=$(php artisan key:generate --show)
+   php artisan key:generate --show
    ```
+   - Copy the output and add it as `APP_KEY` in Vercel environment variables
 
-6. **Deploy to Railway**
-   ```bash
-   railway up
-   ```
+6. **Deploy**
+   - Click "Deploy" in the Vercel dashboard
+   - Wait for the build to complete
 
-7. **Run Database Migrations**
-   ```bash
-   railway run php artisan migrate --force
-   ```
+#### Option 2: Vercel CLI
 
-8. **Seed Database (Optional)**
-   ```bash
-   railway run php artisan db:seed --force
-   ```
-
-9. **Build Frontend Assets**
-   ```bash
-   railway run npm run build
-   ```
-
-#### Railway Dashboard Features
-
-**Web Interface Benefits:**
--  **Visual Deployment** - See deployment progress in real-time
--  **Easy Variable Management** - Add/edit environment variables through UI
--  **Log Monitoring** - View logs directly in the browser
--  **Domain Management** - Configure custom domains easily
--  **Team Collaboration** - Invite team members to manage the project
--  **Resource Monitoring** - Track CPU, memory, and network usage
-
-**Dashboard Sections:**
-- **Overview** - Project status and recent deployments
-- **Deployments** - Build history and logs
-- **Variables** - Environment variable management
-- **Settings** - Domain, team, and project configuration
-- **Metrics** - Performance and usage statistics
-
-#### Railway Configuration
-
-Your project includes a `railway.json` configuration file:
-
-```json
-{
-  "$schema": "https://railway.app/railway.schema.json",
-  "build": {
-    "builder": "NIXPACKS"
-  },
-  "deploy": {
-    "numReplicas": 1,
-    "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10
-  }
-}
-```
-
-#### Railway Dashboard Setup
-
-1. **Access Railway Dashboard**
-   - Go to [railway.app](https://railway.app)
-   - Select your project
-
-2. **Configure Domain**
-   - Go to Settings → Domains
-   - Add your custom domain or use the provided Railway domain
-
-3. **Monitor Deployment**
-   - Check the Deployments tab for build status
-   - View logs for any errors
-
-#### Troubleshooting Railway Deployment
-
-**Common Issues:**
-
-1. **Docker Build Failures**
-   ```bash
-   # Check build logs
-   railway logs
-   
-   # Rebuild and deploy
-   railway up --force
-   ```
-
-2. **Composer Installation Issues**
-   - **Problem**: `composer install --ignore-platform-reqs` fails
-   - **Solution**: Use the provided Dockerfile which handles dependencies properly
-   - **Alternative**: Set environment variable `COMPOSER_ALLOW_SUPERUSER=1`
-
-3. **Database Issues**
-   ```bash
-   # Reset database
-   railway run php artisan migrate:fresh --force
-   railway run php artisan db:seed --force
-   ```
-
-4. **Asset Build Issues**
-   ```bash
-   # Clear cache and rebuild
-   railway run php artisan config:clear
-   railway run php artisan cache:clear
-   railway run npm run build
-   ```
-
-5. **Environment Variables**
-   ```bash
-   # List all variables
-   railway variables
-   
-   # Update specific variable
-   railway variables set VARIABLE_NAME=value
-   ```
-
-6. **Docker Build Optimization**
-   - The project includes a `Dockerfile` optimized for Laravel
-   - Uses multi-stage build to reduce image size
-   - Includes proper PHP extensions and Node.js
-   - Handles permissions correctly
-
-**Docker Configuration Files:**
-- `Dockerfile` - Main container configuration
-- `docker/nginx.conf` - Nginx web server configuration
-- `docker/supervisord.conf` - Process management
-- `.dockerignore` - Excludes unnecessary files from build
-
-**Environment Variables for Docker:**
-```
-COMPOSER_ALLOW_SUPERUSER=1
-APP_ENV=production
-APP_DEBUG=false
-DB_CONNECTION=sqlite
-DB_DATABASE=/tmp/database.sqlite
-CACHE_DRIVER=file
-SESSION_DRIVER=file
-QUEUE_CONNECTION=sync
-```
-
-#### Railway CLI Commands
-
-```bash
-# Deploy changes
-railway up
-
-# View logs
-railway logs
-
-# Run commands
-railway run php artisan migrate
-
-# Open in browser
-railway open
-
-# Check status
-railway status
-```
-
-### Vercel Deployment
+**Step-by-Step CLI Deployment:**
 
 1. **Install Vercel CLI**
    ```bash
-   npm i -g vercel
+   npm install -g vercel
    ```
 
 2. **Login to Vercel**
@@ -457,8 +260,153 @@ railway status
 
 3. **Deploy to Vercel**
    ```bash
+   # Navigate to your project directory
+   cd greensync
+   
+   # Deploy to Vercel
    vercel --prod
    ```
+
+4. **Set Environment Variables**
+   ```bash
+   # Set environment variables
+   vercel env add APP_ENV production
+   vercel env add APP_DEBUG false
+   vercel env add APP_URL https://your-project-name.vercel.app
+   vercel env add DB_CONNECTION sqlite
+   vercel env add DB_DATABASE /tmp/database.sqlite
+   vercel env add CACHE_DRIVER file
+   vercel env add SESSION_DRIVER file
+   vercel env add SESSION_LIFETIME 120
+   vercel env add QUEUE_CONNECTION sync
+   ```
+
+5. **Generate and Set App Key**
+   ```bash
+   # Generate application key
+   APP_KEY=$(php artisan key:generate --show)
+   vercel env add APP_KEY "$APP_KEY"
+   ```
+
+#### Vercel Configuration
+
+Your project includes a `vercel.json` configuration file:
+
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/index.php",
+      "use": "@vercel/php"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.php"
+    }
+  ],
+  "env": {
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "DB_CONNECTION": "sqlite",
+    "DB_DATABASE": "/tmp/database.sqlite",
+    "CACHE_DRIVER": "file",
+    "SESSION_DRIVER": "file",
+    "SESSION_LIFETIME": "120",
+    "QUEUE_CONNECTION": "sync"
+  }
+}
+```
+
+#### Vercel Build Process
+
+The project includes a `vercel-build.sh` script that handles:
+
+-  **PHP Dependencies** - Installs Composer packages
+-  **Node.js Dependencies** - Installs npm packages
+-  **Asset Building** - Builds frontend assets with Vite
+-  **Directory Setup** - Creates necessary Laravel directories
+-  **Permissions** - Sets correct file permissions
+-  **Laravel Optimization** - Caches config, routes, and views
+
+#### Vercel Dashboard Features
+
+**Web Interface Benefits:**
+-  **Visual Deployment** - Real-time deployment progress
+-  **Easy Variable Management** - UI-based environment variable editing
+-  **Log Monitoring** - View build and runtime logs
+-  **Domain Management** - Configure custom domains easily
+-  **Team Collaboration** - Invite team members
+-  **Performance Analytics** - Track performance metrics
+
+#### Troubleshooting Vercel Deployment
+
+**Common Issues:**
+
+1. **Build Failures**
+   ```bash
+   # Check build logs in Vercel dashboard
+   # Common issues: missing dependencies, permission errors
+   ```
+
+2. **Database Issues**
+   - Vercel uses read-only filesystem
+   - Use SQLite with `/tmp/database.sqlite`
+   - Consider external database for production
+
+3. **Asset Build Issues**
+   ```bash
+   # Ensure all dependencies are installed
+   composer install --no-dev --optimize-autoloader --no-interaction
+   npm ci --only=production
+   npm run build
+   ```
+
+4. **Environment Variables**
+   - Set all required Laravel environment variables
+   - Ensure `APP_KEY` is properly generated
+   - Check `APP_URL` matches your Vercel domain
+
+5. **File Permissions**
+   - The build script handles permissions automatically
+   - Ensure storage and bootstrap/cache are writable
+
+6. **Index.php Configuration**
+   - The `public/index.php` has been optimized for Vercel
+   - Includes Vercel-specific environment detection
+   - Proper request/response handling for serverless environment
+   - Enhanced `.htaccess` with security headers and caching
+
+**Vercel-Specific Optimizations:**
+
+- **Index.php Updates**: Added Vercel environment detection and proper request handling
+- **HTAccess**: Enhanced with security headers, caching, and compression
+- **Build Process**: Optimized for serverless deployment
+- **Environment Variables**: Automatic production mode detection
+
+#### Vercel CLI Commands
+
+```bash
+# Deploy to production
+vercel --prod
+
+# Deploy to preview
+vercel
+
+# View deployment status
+vercel ls
+
+# View logs
+vercel logs
+
+# Set environment variable
+vercel env add VARIABLE_NAME value
+
+# List environment variables
+vercel env ls
+```
 
 ### Heroku Deployment
 
@@ -534,11 +482,11 @@ If you encounter any issues or have questions:
 ##  Version History
 
 - **v1.0.0** - Initial release with basic waste management features
-  - User and admin authentication
-  - Waste collection request system
-  - Collection tracking functionality
-  - Transportation management
-  - Segregation oversight
+- User and admin authentication
+- Waste collection request system
+- Collection tracking functionality
+- Transportation management
+- Segregation oversight
 
 ---
 
