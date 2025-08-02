@@ -21,10 +21,5 @@
     "SESSION_DRIVER": "file",
     "SESSION_LIFETIME": "120",
     "QUEUE_CONNECTION": "sync"
-  },
-  "functions": {
-    "public/index.php": {
-      "runtime": "vercel-php@0.6.0"
-    }
   }
 } 
