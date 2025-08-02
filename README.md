@@ -152,8 +152,6 @@ GreenSync/
 ├── package.json           # Node dependencies
 ├── vercel.json           # Vercel configuration
 ├── vercel-build.sh       # Vercel build script
-├── Procfile              # Heroku configuration
-├── deploy.sh             # Deployment script
 └── README.md             # Project documentation
 ```
 
@@ -375,7 +373,7 @@ The project includes a `vercel-build.sh` script that handles:
 
 6. **Index.php Configuration**
    - The `public/index.php` has been optimized for Vercel
-   - Includes Vercel-specific environment detection
+   - Includes Vercel environment detection
    - Proper request/response handling for serverless environment
    - Enhanced `.htaccess` with security headers and caching
 
@@ -406,20 +404,6 @@ vercel env add VARIABLE_NAME value
 
 # List environment variables
 vercel env ls
-```
-
-### Heroku Deployment
-
-The project includes a `Procfile` for Heroku deployment:
-```
-web: vendor/bin/heroku-php-apache2 public/
-```
-
-### Automated Deployment
-
-Use the provided deployment script:
-```bash
-./deploy.sh
 ```
 
 ### Environment Variables for Production
@@ -482,12 +466,12 @@ If you encounter any issues or have questions:
 ##  Version History
 
 - **v1.0.0** - Initial release with basic waste management features
-- User and admin authentication
-- Waste collection request system
-- Collection tracking functionality
-- Transportation management
-- Segregation oversight
+  - User and admin authentication
+  - Waste collection request system
+  - Collection tracking functionality
+  - Transportation management
+  - Segregation oversight
 
 ---
 
-**Built with ❤️ using Laravel** 
+**Built with ❤️ using Laravel**
