@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Environmental Management Platform",
   "scripts": {
-    "build": "npm run build",
-    "dev": "npm run dev",
+    "dev": "php artisan serve",
     "deploy": "bash deploy.sh"
   },
   "keywords": [
