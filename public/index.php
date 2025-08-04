@@ -29,7 +29,7 @@ $request = Request::capture();
 $response = $app->handleRequest($request);
 
 // Send the response
-$response->send();
+//$response->send();
 
 // Terminate the application
 $app->terminate($request, $response);
