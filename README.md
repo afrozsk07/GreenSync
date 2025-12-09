@@ -15,7 +15,7 @@ A modern, full-stack waste management system built with Next.js 15, Supabase, Ty
 
 GreenSync is a comprehensive waste management platform connecting users with waste collection services. Features include real-time tracking, role-based access control, collection management, and analytics dashboards.
 
-**Live Demo:** [Your Vercel URL]
+### Live Demo: [https://greensync-phi.vercel.app/]
 
 ## Key Features
 
