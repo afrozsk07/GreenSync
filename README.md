@@ -1,36 +1,231 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GreenSync
 
-## Getting Started
+**Complete Waste Management Platform**
 
-First, run the development server:
+A modern, full-stack waste management system built with Next.js 15, Supabase, TypeScript, and Tailwind CSS.
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.7-black)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)](https://supabase.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+---
+
+## Overview
+
+GreenSync is a comprehensive waste management platform connecting users with waste collection services. Features include real-time tracking, role-based access control, collection management, and analytics dashboards.
+
+**Live Demo:** [Your Vercel URL]
+
+## Key Features
+
+### User Features
+- Submit waste collection requests with saved addresses
+- Real-time collection status tracking
+- View assigned vehicle and driver details
+- Manage multiple addresses
+- Collection history with filters
+- Profile management with statistics
+- Expected pickup time display
+
+### Admin Features
+- ATnalytics dashboard with interactive charts
+- Approve/reject collection requests
+- Vehicle fleet management (CRUD)
+- Driver management (CRUD)
+- Collection assignment (vehicle + driver)
+- Collection status updates (scheduled → in progress → completed)
+- Waste category management
+- Visual analytics (pie, bar, and line charts)
+
+## Tech Stack
+
+| Category | Technology |
+|----------|-----------|
+| **Framework** | Next.js 15.5.7 (App Router) |
+| **Language** | TypeScript |
+| **Database** | Supabase (PostgreSQL) |
+| **Authentication** | Supabase Auth |
+| **Styling** | Tailwind CSS |
+| **UI Components** | shadcn/ui |
+| **Forms** | React Hook Form + Zod |
+| **Charts** | Recharts |
+| **Icons** | Lucide React |
+
+## Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/greensync.git
+cd greensync
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.local.example .env.local
+# Add your Supabase URL and anon key to .env.local
+
+# Run database migrations
+# Copy content from supabase-schema.sql and run in Supabase SQL Editor
+
+# (Optional) Seed mock data
+# Copy content from seed-mock-data.sql and run in Supabase SQL Editor
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` to see the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Default Credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Admin Account
+```
+Email: admin@greensync.com
+Password: admin123
+```
 
-## Learn More
+### Test User Account
+```
+Email: user1@greensync.com
+Password: 123user1
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Database Schema
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+9 core tables with Row Level Security (RLS):
+- **profiles** - User profiles with roles
+- **user_addresses** - Multiple addresses per user
+- **waste_requests** - Collection requests
+- **collections** - Assigned collections with status tracking
+- **vehicles** - Vehicle fleet management
+- **drivers** - Driver information
+- **transportations** - Transportation tracking
+- **waste_categories** - Waste type classifications
+- **segregations** - Segregation records
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+greensync/
+├── app/
+│   ├── (auth)/              # Login, Register
+│   ├── dashboard/           # User Dashboard
+│   ├── collections/         # Collection Management
+│   ├── addresses/           # Address Management
+│   ├── profile/             # User Profile
+│   └── admin/               # Admin Pages
+│       ├── dashboard/       # Admin Dashboard with Charts
+│       ├── requests/        # Request Management
+│       ├── collections/     # Collection Status Updates
+│       ├── vehicles/        # Vehicle Management
+│       ├── drivers/         # Driver Management
+│       └── categories/      # Category Management
+├── components/
+│   ├── ui/                  # shadcn/ui components
+│   └── dashboard/           # Dashboard components
+├── lib/
+│   ├── supabase/            # Supabase clients
+│   └── auth.ts              # Auth utilities
+└── types/                   # TypeScript types
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Deploy to Vercel
+
+1. **Push to GitHub**
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin <your-repo-url>
+git push -u origin main
+```
+
+2. **Deploy on Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Import your GitHub repository
+   - Add environment variables:
+     - `NEXT_PUBLIC_SUPABASE_URL`
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - Click Deploy
+
+3. **Post-Deployment**
+   - Run database migrations in Supabase
+   - Create admin user
+   - (Optional) Seed mock data
+
+## Features Showcase
+
+### User Dashboard
+- Real-time statistics
+- Recent collection requests
+- Quick action cards
+- Saved address selection
+
+### Admin Dashboard
+- Interactive charts (Pie, Bar, Line)
+- Real-time analytics
+- Quick navigation cards
+- Recent requests feed
+
+### Collection Management
+- Status tracking (scheduled → in progress → completed)
+- Vehicle and driver assignment
+- Actual pickup time recording
+- Completion time tracking
+
+## Development
+
+```bash
+# Development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
+
+## Project Status
+
+**Status:** Production Ready
+
+- Authentication & Authorization
+- User Features (100%)
+- Admin Features (100%)
+- Collection Status Updates
+- Analytics Dashboard with Charts
+- Real-time Data
+- Responsive Design
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+
+## Acknowledgments
+
+- [Next.js](https://nextjs.org/) - React framework
+- [Supabase](https://supabase.com/) - Backend infrastructure
+- [shadcn/ui](https://ui.shadcn.com/) - UI components
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Recharts](https://recharts.org/) - Charts library
+
+## License
+
+This project is [MIT](LICENSE) licensed.

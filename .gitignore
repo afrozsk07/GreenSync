@@ -39,3 +39,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Documentation files (except README)
+PROJECT_ANALYSIS.md
+PROJECT_COMPLETE.md
+REBUILD_PLAN.md
+START_HERE.md
+SETUP_GUIDE.md
+QUICK_START.md
+PHASE1_COMPLETE.md
+PHASE1_SUMMARY.md
+BUILD_NOTES.md
+TODO.md
+PROGRESS.md
+SEED_DATA_INSTRUCTIONS.md
+DEPLOYMENT.md
+FINAL_SUMMARY.md
+
+# Database seed files
+seed-mock-data.sql
